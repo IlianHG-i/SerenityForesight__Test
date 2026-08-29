@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+.next/
+coverage/
+
+# Environment / credentials
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Sensitive / personal test data (never commit real PII, only synthetic fixtures)
+*.secret.*
+/data/private/
+
+# OS
+.DS_Store
