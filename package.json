@@ -1,0 +1,27 @@
+{
+  "name": "test-serenityforesight",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "devStart" : "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IlianHG-i/SerenityForesight---Interview-Test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/IlianHG-i/SerenityForesight---Interview-Test/issues"
+  },
+  "homepage": "https://github.com/IlianHG-i/SerenityForesight---Interview-Test#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
