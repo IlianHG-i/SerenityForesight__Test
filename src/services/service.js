@@ -67,7 +67,12 @@ async function service_analyze(texte, lang) {
     }
     catch(err) {
         console.error('Erreur:', err);
-        throw new Error('Erreur, le service ne fonctionne pas')
+        if (err.message == "PRESIDIO_UNREACHABLE") {
+            throw new Error('PRESIDIO_UNREACHABLE')
+        } else {
+            throw new Error('PRESIDIO_ERROR')
+
+        }
   }
 }
 
