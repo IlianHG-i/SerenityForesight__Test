@@ -6,10 +6,7 @@ async function health() {
     return true;
 }
 
-
 async function analyze(texte, lang) {
-        console.log(JSON.stringify({text: texte, language: lang}))
-        
         const requete = await fetch('http://presidio:3000/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -24,9 +21,6 @@ async function analyze(texte, lang) {
         const data = await requete.json();
         return data;
 }
-
-
-
 
 module.exports = {health, analyze}
 
