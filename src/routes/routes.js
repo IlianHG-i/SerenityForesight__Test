@@ -1,20 +1,165 @@
-const express = require('express')
-const router = express.Router()
-const controller = require('../controllers/controllers')
+const express = require('express');
+const router = express.Router();
+const controller = require('../controllers/controllers');
+
+const swaggerUI = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
+
+const fs = require('fs'); 
+const openapiSpecification = swaggerJsdoc({
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Api Clients Calls',
+      version: '1.0.0',
+    },
+  },
+  apis: ['./src/routes/routes.js'],
+});
+fs.writeFileSync("openapi.json", JSON.stringify(openapiSpecification, null, 2)); 
+
+router.get('/api-docs/openapi.json', (req,res) => {res.json(openapiSpecification)})
+router.use('/api-docs', swaggerUI.serve, swaggerUI.setup(openapiSpecification));
 
 
 router.get('/', (req, res) => {
-    // console.log('test de la page de base')
     res.send('Hello world')
 })
 
+/**
+ * @openapi 
+ * /health:
+ *      get: 
+ *          responses : 
+ *              200: 
+ *                  description: presidio available
+ *                  content : 
+ *                      application/json : 
+ *                          schema : 
+ *                              type : object
+ *                          examples:
+ *                              presidioSucces: 
+ *                                  summary: Presidio is reachable or available
+ *                                  value: {status: 'ok', analyzeService: 'available'}
+ *              503: 
+ *                  description: presidio not available
+ *                  content : 
+ *                      application/json : 
+ *                          schema : 
+ *                              type : object
+ *                          examples:
+ *                              presidioError: 
+ *                                  summary: Presidio is unavailable
+ *                                  value: {error: {code: "PRESIDIO_UNREACHABLE",message: "Presidio is unreachable or not available a the moment."}}
+ */
+
 router.get('/health', async (req, res) => {
-    // console.log('test mcv health'); 
     controller.controller_health(req, res); 
 })
 
+/**
+ * @openapi 
+ * /api/v1/analyze:
+ *      post: 
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    type: object
+ *                    properties:
+ *                      text:
+ *                        type: string
+ *                      language:
+ *                        type: string
+ *                        default: "en"
+ * 
+ *          responses : 
+ *              200: 
+ *                  description: presidio application-owned format response
+ *                  content : 
+ *                      application/json : 
+ *                          schema : 
+ *                              type : object
+ *                              properties: 
+ *                                  containsSensitiveData:
+ *                                     type: boolean
+ *                                  riskLevel:
+ *                                      type: string
+ *                                  summary:
+ *                                      type: object
+ *                                      properties:
+ *                                          totalEntities:
+ *                                              type: integer
+ *                                          entityTypes:
+ *                                              type: object
+ *                                              additionalProperties:
+ *                                                  type: integer
+ *                                  entities:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                              start:
+ *                                                  type: integer
+ *                                              end:
+ *                                                  type: integer
+ *                                              confidence:
+ *                                                  type: number
+ *                                   
+ *              400: 
+ *                  description: Clients errors in the text or language
+ *                  content : 
+ *                      application/json : 
+ *                          schema : 
+ *                              type : object
+ *                          examples:
+ *                               missingText:
+ *                                  summary: Missing text field
+ *                                  value: { error: { code: MISSING_TEXT_FIELD, message: "The text field is required." } }
+ *                               emptyText:
+ *                                  summary: Empty text field
+ *                                  value: {error: {code: "EMPTY_TEXT",message: "The text field is empty."}}
+ *                               notStringText:
+ *                                 summary: Text is not a string
+ *                                 value: {error: {code: "NOT_STRING_TEXT",message: "The text field is not a string."}}
+ *                               tooLongText:
+ *                                 summary: Text too long
+ *                                 value: {error: {code: "TOO_LONG_TEXT",message: "The text is too long."}}
+ *                               missingLanguage:
+ *                                 summary: Missing language field
+ *                                 value: {error: {code: "MISSING_LANGUAGE",message: "The language field is missing."}}
+ *                               unsupportedLanguage:
+ *                                 summary: Language not supported
+ *                                 value: {error: {code: "UNSUPPORTED_LANGUAGE",message: "The language is not supported."}}
+ *              500: 
+ *                  description: Generic internal error
+ *                  content : 
+ *                      application/json : 
+ *                          schema : 
+ *                              type : object
+ *                          examples:
+ *                               presidioInternalError:
+ *                                  summary: Presidio internal error
+ *                                  value: {error: {code: "PRESIDIO_ERROR",message: "Presidio as an error."}}
+ *                               internalError:
+ *                                  summary: Internal error
+ *                                  value: {error: {code: "INTERNAL_ERROR",message: "There is an error"}}
+ *              503: 
+ *                  description: Presidio not available or reachable
+ *                  content : 
+ *                      application/json : 
+ *                          schema : 
+ *                              type : object
+ *                          examples:
+ *                               presidio_unreachable:
+ *                                  summary: Presidio is unreachable or unavailable
+ *                                  value: {error: {code: "PRESIDIO_UNREACHABLE",message: "Presidio is unreachable or not available a the moment."}}
+ */
+
 router.post('/api/v1/analyze', async (req, res) => {
-    // console.log('Api v1 analyze');
     controller.controller_analyze(req, res)
 })
 

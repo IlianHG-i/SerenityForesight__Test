@@ -1,8 +1,12 @@
 require('dotenv').config()
-const express = require('express')
-const app = express()
-const routes = require('./src/routes/routes')
 
-app.use(express.json())
-app.use(routes)
-app.listen(3000)
+const express = require('express');
+const app = express();
+
+
+app.use(express.json());
+
+const routes = require('./src/routes/routes');
+app.use(routes);
+
+app.listen(3000);

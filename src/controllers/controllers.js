@@ -7,10 +7,7 @@ async function controller_health(req, res) {
     if (requete == false) {
       throw new Error("PRESIDIO_UNREACHABLE"); 
     }
-    res.status(200).json({
-      status: 'ok',
-      analyzeService: 'available'
-    });
+    res.status(200).json({status: 'ok', analyzeService: 'available'});
   } catch (err) {
     res.status(503).json({error: {code: "PRESIDIO_UNREACHABLE",message: "Presidio is unreachable or not available a the moment."}});
   }
@@ -23,7 +20,7 @@ async function controller_analyze(req, res) {
     const isValid = validator.valid(text, lang); 
     const requete = await service.service_analyze(text, lang);
     const data = await requete;
-    res.json(data);
+    res.status(200).json(data);
   } catch(err) {
     console.error('Erreur:', err);
     if (err.message == "MISSING_TEXT_FIELD") {
